@@ -8,3 +8,8 @@
 - **Pencarian dan Filter**: Memudahkan pencarian barang dengan fitur filter berdasarkan kategori, nama barang, atau jumlah stok.
 
 <p>Dengan aplikasi ini, proses pengelolaan inventaris menjadi lebih mudah, mengurangi kesalahan manusia, dan meningkatkan efisiensi operasional bagi toko atau perusahaan.</p>
+
+
+# Aplikasi ini tidak untuk diperjual belikan
+<p> Terima Kasih atas kerja sama nya</p>
+
