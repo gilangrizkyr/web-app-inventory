@@ -3,6 +3,59 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Barangkeluar extends CI_Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+        // Load database library untuk query
+        $this->load->database();
+    }
+    public function search_barang()
+    {
+        $nama_barang = $this->input->get('nama_barang');
+    
+        log_message('debug', 'Pencarian barang dengan nama: ' . $nama_barang);
+    
+        $this->db->like('nama_barang', $nama_barang);
+        $query = $this->db->get('stock');
+    
+        if ($query === false) {
+            log_message('error', 'Query error: ' . $this->db->_error_message());
+            echo "Error in query";
+            return;
+        }
+    
+        $barang = $query->result();
+    
+        if (!empty($barang)) {
+            echo "<div style='display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px;'>";
+            foreach ($barang as $item) {
+                echo "<div class='barang-item' onclick='selectBarang(\"" . $item->nama_barang . "\", \"" . $item->spesifikasi . "\")' style='cursor: pointer; width: calc(33.33% - 10px); margin-bottom: 15px; border: 1px solid #ddd; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9; box-sizing: border-box;'>";
+                echo "<h5 style='margin: 0; color: #2c3e50; font-weight: bold;'>" . $item->nama_barang . "</h5>";
+                echo "<p style='margin: 5px 0; color: #7f8c8d;'>Spesifikasi: " . $item->spesifikasi . "</p>";
+                echo "<p style='margin: 5px 0; color: #2ecc71; font-weight: bold;'>Jumlah Tersedia: " . $item->jumlah . "</p>";
+                echo "<p style='margin: 5px 0; color: #e67e22; font-weight: bold;'>Harga: Rp. " . number_format($item->harga, 0, ',', '.') . "</p>";
+                echo "</div>";
+            }
+            echo "</div>";
+        } else {
+            echo "<p>Tidak ada barang yang ditemukan.</p>";
+        }
+        
+    }
+    
+    
+    
+    
+
+    // Fungsi untuk memilih barang (misalnya untuk autofill input nama barang)
+    public function pilih_barang()
+    {
+        // Ambil parameter barang yang dipilih
+        $nama_barang = $this->input->get('nama_barang');
+
+        // Set nama barang ke input field
+        echo $nama_barang;
+    }
     public function index()
     {
         $barangkeluar = $this->db->query("SELECT * FROM barangkeluar ORDER BY idkeluar DESC")->result();
@@ -311,8 +364,8 @@ class Barangkeluar extends CI_Controller
         $idkeluar = $this->input->post('idkeluar');
         $nama_barang = $this->input->post('nama_barang');
         $jumlah = $this->input->post('jumlah');
-        $alasan= $this->input->post('alasan');
-        
+        $alasan = $this->input->post('alasan');
+
 
         // Ambil data barang keluar berdasarkan idkeluar
         $query_keluar = $this->db->where('idkeluar', $idkeluar)->get('barangkeluar');
@@ -326,7 +379,7 @@ class Barangkeluar extends CI_Controller
 
         // Ambil data barang masuk berdasarkan nama barang dan spesifikasi
         $this->db->where('nama_barang', $nama_barang);
-   
+
         $query_masuk = $this->db->get('barangmasuk');
         $barangmasuk = $query_masuk->row();
 
@@ -350,7 +403,7 @@ class Barangkeluar extends CI_Controller
             'nama_barang' => $nama_barang,
             'jumlah' => $jumlah,
             'alasan' => $alasan,
-            
+
         ];
         $this->db->where('idkeluar', $idkeluar);
         $this->db->update('barangkeluar', $data_keluar);
@@ -360,7 +413,7 @@ class Barangkeluar extends CI_Controller
             'jumlah' => $new_jumlah_masuk,
         ];
         $this->db->where('nama_barang', $nama_barang);
-     
+
         $this->db->update('barangmasuk', $data_masuk);
 
         // Set pesan sukses
